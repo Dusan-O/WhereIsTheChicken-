@@ -29,11 +29,14 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
+        resultLabel.text = ""
 
     }
     
     func play() {
         isGameOn = true
+        score = 0
+        updateScore()
         updateUI()
         setupChicken()
     }
@@ -41,15 +44,14 @@ class ViewController: UIViewController {
     func stop() {
         isGameOn = false
         updateUI()
+        chickenIV.image = UIImage(named: "bg")
     }
     
-    func checkAnswer(taf : Int) {
 
-    }
     
     func setupChicken() {
-        let randomInt = Int.random(in: 0...7)
-        let imageString = "poule\(randomInt)"
+        currentChicken = Int.random(in: 0...7)
+        let imageString = "poule\(currentChicken)"
         let image = UIImage(named: imageString)
         chickenIV.image = image
     }
@@ -70,14 +72,26 @@ class ViewController: UIViewController {
         resultLabel.text = success ? "Gagné" : "Perdu"
     }
     
+    func checkAnswer(tag : Int) {
+        let wrong = wrongAndwers.contains(currentChicken)
+        let saidNo = tag == 1
+        let success = wrong == saidNo
+        if success {
+            score += 1
+            updateScore()
+        }
+        updateAnswer(success: success)
+        setupChicken()
+    }
+    
     
     @IBAction func playBtnPressed(_ sender: Any) {
         isGameOn ? stop() : play()
     }
     
     @IBAction func answerPressed(_ sender: UIButton) {
+        let tag = sender.tag
+        checkAnswer(tag: tag)
     }
-    
-
 }
 
